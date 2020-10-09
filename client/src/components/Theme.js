@@ -46,9 +46,6 @@ const Theme = (props) => {
     if (localStorage.getItem("theme")) {
       saveTheme(localStorage.getItem("theme"));
     }
-    console.log(
-      "within useEffect in Themes.js props.userEmail: " + props.userEmail
-    );
     if (localStorage.getItem("email")) {
       axios.get("/theme/" + props.userEmail).then(
         (res) => {

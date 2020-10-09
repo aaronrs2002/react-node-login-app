@@ -22,12 +22,12 @@ const ChangePassword = (props) => {
       axios
         .put(
           "/change-password",
+          config,
           {
             email: sessionStorage.getItem("email"),
             password: document.querySelector("input[name='new-password']")
               .value,
-          },
-          config
+          }
         )
         .then(
           (res) => {

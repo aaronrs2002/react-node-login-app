@@ -185,7 +185,7 @@ app.get("/theme/:email", (req, res) => {
 
 //START REFRESH
 
-app.get("/check-token/:email", (req, res) => {
+app.get("/check-token/:email", checkToken, (req, res) => {
   let sql = `SELECT token FROM user WHERE email = '${req.params.email}'`;
   let query = db.query(sql, (err, results) => {
     if (err) {

@@ -14,6 +14,12 @@ function App() {
   let [message, setMessage] = useState("default");
   let [messageType, setMessageType] = useState("danger");
   let [checkedToken, setTokenCk] = useState(false);
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    },
+  };
 
   const showMessage = (theMessage, theType) => {
     setMessageType((messageType) => theType)
@@ -32,7 +38,6 @@ function App() {
       setTokenCk((checkedToken) => true);
       setEmail((userEmail) => email);
       sessionStorage.setItem("email", email);
-      console.log("This was a success 'isValidUser is: " + isValidUser);
     } else {
       setValidUser((isValidUser) => false);
       setToken((token) => token);
@@ -124,11 +129,10 @@ function App() {
   //START REFRESH
   useEffect(() => {
     if (sessionStorage.getItem("token") && checkedToken === false) {
-      console.log("there was a token: " + sessionStorage.getItem("token"));
-      axios.get("/check-token/" + sessionStorage.getItem("email")).then(
+      axios.get("/check-token/" + sessionStorage.getItem("email"),
+      config).then(
         (res) => {
           if (sessionStorage.getItem("token") === res.data[0].token) {
-            console.log(res);
             validateUser(
               1,
               res.data[0].token,
@@ -148,9 +152,7 @@ function App() {
           showMessage( "That didn't work: " + error, "danger");
         }
       );
-    } else {
-      console.log("NO token BOSS. submitted new token token?: " + checkedToken);
-    }
+    } 
   });
   //END REFRESH
 
