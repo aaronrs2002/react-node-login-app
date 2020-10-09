@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import DeleteUser from "./components/DeleteUser";
 import Theme from "./components/Theme";
 import ChangePassword from "./components/ChangePassword";
+import uuid from "./components/uuid"
 
 function App() {
   let [userEmail, setEmail] = useState(null);
@@ -16,16 +17,6 @@ function App() {
 
   //START VALIDATE USER
   const validateUser = (success, token, email, msg) => {
-    console.log(
-      "From validateUser success: " +
-        success +
-        " token: " +
-        token +
-        " email: " +
-        email +
-        " msg: " +
-        msg
-    );
     if (success === 1) {
       setValidUser((isValidUser) => true);
       setToken((token) => token);
@@ -42,8 +33,6 @@ function App() {
       setTimeout(() => {
         setMessage((message) => "default");
       }, 5000);
-
-      console.log("isValidUser from validateUser: " + isValidUser);
     }
   };
   ///END VALIDATE USER
@@ -121,6 +110,35 @@ function App() {
     setValidUser((isValidUser) => false);
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("email");
+/*
+app.put("/logout-uuid/:email", checktoken, (req, res) => {
+  let sql = `UPDATE user SET token = '${req.body.uuid}' WHERE email = "${req.body.email}"`;
+*/
+axios
+.put(
+  "/logout-uuid/",
+  {
+    email: userEmail,
+    uuid: "logged-out: "+ uuid(),
+  }
+)
+.then(
+  (res) => {
+  console.log("res from logout: "+ res);
+
+  },
+  (error) => {
+    setMessage(
+      (message) => "Something happened while logging out: : " + error
+    );
+    setTimeout(() => {
+      setMessage((message) => "default");
+    }, 5000);
+  }
+);
+
+
+
   };
   //END LOG OUT
 

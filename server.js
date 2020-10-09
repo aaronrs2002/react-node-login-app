@@ -50,10 +50,8 @@ app.post("/newUser", (req, res) => {
 
 /////////////////////////////START LOGIN
 
-const saveToken = (token, email, res) => {
+const saveToken = (token, email) => {
   let sql = `UPDATE user SET token = '${token}' WHERE email = "${email}"`;
-
-  console.log("saveToken was fired.");
   let query = db.query(sql, (err, result) => {
     if (err) {
       console.log("There was an error on the server side: " + err);
@@ -124,6 +122,23 @@ app.post("/login", (req, res) => {
 
 //////////////////////////////END LOGIN
 
+//START LOGOUT
+
+app.put("/logout-uuid",  (req, res) => {
+  let sql = `UPDATE user SET token = '${req.body.uuid}' WHERE email = "${req.body.email}"`;
+  let query = db.query(sql, (err, result) => {
+    if (err) {
+      res.send("Setting logout token failed: "+err);
+    } else {
+      console.log("JSON.stringify(result): "+ JSON.stringify(result));
+      saveToken(req.body.uuid, req.body.email);
+      res.send("logout uuid saved.")
+    }
+  });
+})
+
+//END LOG OUT
+
 //START DELETE USER
 app.delete("/delete-user/:email", checkToken, (req, res) => {
   let sql = "DELETE FROM user WHERE email = '" + req.params.email + "'";
@@ -176,7 +191,6 @@ app.get("/check-token/:email", (req, res) => {
     if (err) {
       console.log("Checked for token, giot this error: " + err);
     } else {
-      console.log("Checked for token with success: " + JSON.stringify(results));
       res.send(results);
     }
   });
