@@ -12,8 +12,7 @@ var randomize = function (base) {
 
     return returnValue;
 };
-/**
-*
+/*
 * Creates a unique user id
 * @method uuid
 * @return {String} uuid A unique string in a uuid format

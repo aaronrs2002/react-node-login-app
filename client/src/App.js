@@ -110,10 +110,7 @@ function App() {
     setValidUser((isValidUser) => false);
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("email");
-/*
-app.put("/logout-uuid/:email", checktoken, (req, res) => {
-  let sql = `UPDATE user SET token = '${req.body.uuid}' WHERE email = "${req.body.email}"`;
-*/
+
 axios
 .put(
   "/logout-uuid/",

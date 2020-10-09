@@ -123,7 +123,7 @@ app.post("/login", (req, res) => {
 //////////////////////////////END LOGIN
 
 //START LOGOUT
-
+// replace token with unique id so tokens cannot be used after logout
 app.put("/logout-uuid",  (req, res) => {
   let sql = `UPDATE user SET token = '${req.body.uuid}' WHERE email = "${req.body.email}"`;
   let query = db.query(sql, (err, result) => {
