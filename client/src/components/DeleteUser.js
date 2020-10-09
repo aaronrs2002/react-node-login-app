@@ -15,24 +15,12 @@ const DeleteUser = (props) => {
     axios.delete("/delete-user/" + props.userEmail, config).then(
       (res) => {
         if (res.data.email === sessionStorage.getItem("email")) {
-          props.setMessageType((messageType) => "success");
-          props.setMessage(
-            (message) =>
-              JSON.stringify(res.data.email) + " was deleted succesfully!"
-          );
-          setTimeout(() => {
-            props.setMessage((message) => "default");
-          }, 5000);
-
+          props.showMessage(JSON.stringify(res.data.email) + " was deleted succesfully!", "success");
           props.logout();
         }
       },
       (error) => {
-        console.log(error);
-        props.setMessage((message) => "That did not work: " + error);
-        setTimeout(() => {
-          props.setMessage((message) => "default");
-        }, 5000);
+        props.showMessage("That did not work: " + error, "danger");
       }
     );
   };

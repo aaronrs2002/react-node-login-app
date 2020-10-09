@@ -15,6 +15,14 @@ function App() {
   let [messageType, setMessageType] = useState("danger");
   let [checkedToken, setTokenCk] = useState(false);
 
+  const showMessage = (theMessage, theType) => {
+    setMessageType((messageType) => theType)
+    setMessage((message) => theMessage);
+    setTimeout(() => {
+      setMessage((message) => "default");
+    }, 5000);
+  }
+
   //START VALIDATE USER
   const validateUser = (success, token, email, msg) => {
     if (success === 1) {
@@ -29,10 +37,7 @@ function App() {
       setValidUser((isValidUser) => false);
       setToken((token) => token);
       setEmail((userEmail) => null);
-      setMessage((message) => "That didn't work: " + msg);
-      setTimeout(() => {
-        setMessage((message) => "default");
-      }, 5000);
+      showMessage( "That didn't work: " + msg, "danger");
     }
   };
   ///END VALIDATE USER
@@ -55,20 +60,12 @@ function App() {
       )
       .then(
         (res) => {
-          setMessageType((messageType) => "success");
+          showMessage( "User created succussfully!", "success");
           setUserType((newUser) => false);
-          setMessage((message) => "User created succussfully!");
           document.querySelector("button.ckValidate").classList.remove("hide");
-          setTimeout(() => {
-            setMessage((message) => "default");
-            setMessageType((messageType) => "danger");
-          }, 5000);
         },
         (error) => {
-          setMessage((message) => "That didn't work: " + error);
-          setTimeout(() => {
-            setMessage((message) => "default");
-          }, 5000);
+          showMessage( "That didn't work: " + error, "danger");
         }
       );
   };
@@ -94,12 +91,8 @@ function App() {
         (res) => {
           validateUser(res.data.success, res.data.token, email, res.data.data);
         },
-
         (error) => {
-          setMessage((message) => "That didn't work: " + error);
-          setTimeout(() => {
-            setMessage((message) => "default");
-          }, 5000);
+          showMessage( "That didn't work: " + error, "danger");
         }
       );
   };
@@ -111,31 +104,20 @@ function App() {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("email");
 
-axios
-.put(
-  "/logout-uuid/",
-  {
-    email: userEmail,
-    uuid: "logged-out: "+ uuid(),
-  }
-)
-.then(
-  (res) => {
-  console.log("res from logout: "+ res);
-
-  },
-  (error) => {
-    setMessage(
-      (message) => "Something happened while logging out: : " + error
+    axios.put(
+      "/logout-uuid/",
+      {
+        email: userEmail,
+        uuid: "logged-out: "+ uuid(),
+      }
+    ).then(
+      (res) => {
+      console.log("res from logout: "+ res);
+      },
+      (error) => {
+        showMessage( "Something happened while logging out: : " + error, "danger");
+      }
     );
-    setTimeout(() => {
-      setMessage((message) => "default");
-    }, 5000);
-  }
-);
-
-
-
   };
   //END LOG OUT
 
@@ -163,17 +145,13 @@ axios
           }
         },
         (error) => {
-          setMessage((message) => "That didn't work: " + error);
-          setTimeout(() => {
-            setMessage((message) => "default");
-          }, 5000);
+          showMessage( "That didn't work: " + error, "danger");
         }
       );
     } else {
       console.log("NO token BOSS. submitted new token token?: " + checkedToken);
     }
   });
-
   //END REFRESH
 
   return (
@@ -189,12 +167,11 @@ axios
               />
             </div>
             <div className="ml-auto p-2 bd-highlight">
-              <Theme userEmail={userEmail} setMessage={setMessage} />
+              <Theme userEmail={userEmail} showMessage={showMessage} />
             </div>
           </div>
         </nav>
       ) : null}
-
       <div className="container">
         {isValidUser === false ? (
           <Login
@@ -216,10 +193,9 @@ axios
             <DeleteUser
               userEmail={userEmail}
               logout={logout}
-              setMessageType={setMessageType}
-              setMessage={setMessage}
+              showMessage={showMessage}
             />
-            <ChangePassword setMessage={setMessage} />
+            <ChangePassword showMessage={showMessage} />
           </div>
         )}{" "}
         {message !== "default" ? (

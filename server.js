@@ -56,7 +56,7 @@ const saveToken = (token, email) => {
     if (err) {
       console.log("There was an error on the server side: " + err);
     } else {
-      console.log("That worked. here is the token result: " + result);
+      console.log("That worked. here is the token result: " + JSON.stringify(result));
       // res.send(result);
     }
   });

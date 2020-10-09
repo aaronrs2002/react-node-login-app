@@ -31,34 +31,25 @@ const ChangePassword = (props) => {
         )
         .then(
           (res) => {
-            //saveTheme(whichTheme);
+            props.showMessage("Password changed successfully", "success");
+            document.querySelector("input[name='new-password']").value = "";
           },
           (error) => {
-            props.setMessage(
-              (message) => "That theme change didn't work: " + error
-            );
-            setTimeout(() => {
-              props.setMessage((message) => "default");
-            }, 5000);
+            props.showMessage("Password change didn't work: " + error, "danger");
           }
         );
     } else {
       newPasswordElem.classList.add("error");
-      props.setMessage(
-        (message) => 'Please input something into the "New Password" field.'
-      );
-      setTimeout(() => {
-        props.setMessage((message) => "default");
-      }, 5000);
+      props.showMessage('Please input something into the "New Password" field.', "danger");
     }
   };
 
   return (
     <div className="col-md-3">
-      <form onSubmit={changePassword}>
+    
         <div className="form-group">
           <input
-            type="text"
+            type="password"
             name="new-password"
             className="form-control"
             placeholder="New Password"
@@ -66,11 +57,12 @@ const ChangePassword = (props) => {
           <button
             type="submit"
             className="btn btn-block btn-danger ckValidate "
+            onClick={changePassword}
           >
             Change Password
           </button>
         </div>
-      </form>
+ 
     </div>
   );
 };

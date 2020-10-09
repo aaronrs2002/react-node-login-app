@@ -34,14 +34,10 @@ const Theme = (props) => {
       .then(
         (res) => {
           saveTheme(whichTheme);
+          props.showMessage( "Theme changed!", "success");
         },
         (error) => {
-          props.setMessage(
-            (message) => "That theme change didn't work: " + error
-          );
-          setTimeout(() => {
-            props.setMessage((message) => "default");
-          }, 5000);
+          props.showMessage( "That theme change didn't work: " + error, "danger");
         }
       );
   }
