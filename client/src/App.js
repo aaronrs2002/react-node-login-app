@@ -4,16 +4,20 @@ import Login from "./components/Login";
 import DeleteUser from "./components/DeleteUser";
 import Theme from "./components/Theme";
 import ChangePassword from "./components/ChangePassword";
-import uuid from "./components/uuid"
+import uuid from "./components/uuid";
+import SaveTheme from "./components/SaveTheme"
+import MainContent from "./components/MainContent";
+import Nav from "./components/Nav"
 
 function App() {
   let [userEmail, setEmail] = useState(null);
   let [newUser, setUserType] = useState(false);
   let [isValidUser, setValidUser] = useState(false);
   let [token, setToken] = useState("");
-  let [message, setMessage] = useState("default");
-  let [messageType, setMessageType] = useState("danger");
+  let [alert, setAlert] = useState("default");
+  let [alertType, setAlertType] = useState("danger");
   let [checkedToken, setTokenCk] = useState(false);
+  let [infoMessage, toggleInfo] = useState("");
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -21,11 +25,11 @@ function App() {
     },
   };
 
-  const showMessage = (theMessage, theType) => {
-    setMessageType((messageType) => theType)
-    setMessage((message) => theMessage);
+  const showAlert = (theMessage, theType) => {
+    setAlertType((alertType) => theType)
+    setAlert((alert) => theMessage);
     setTimeout(() => {
-      setMessage((message) => "default");
+      setAlert((alert) => "default");
     }, 5000);
   }
 
@@ -38,11 +42,23 @@ function App() {
       setTokenCk((checkedToken) => true);
       setEmail((userEmail) => email);
       sessionStorage.setItem("email", email);
+        axios.get("/theme/" + email).then(
+          (res) => {
+            if (res.data[0].theme) {
+              SaveTheme(res.data[0].theme);
+            } else {
+              SaveTheme("css/bootstrap.min.css");
+            }
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
     } else {
       setValidUser((isValidUser) => false);
       setToken((token) => token);
       setEmail((userEmail) => null);
-      showMessage( "That didn't work: " + msg, "danger");
+      showAlert( "That didn't work: " + msg, "danger");
     }
   };
   ///END VALIDATE USER
@@ -65,12 +81,12 @@ function App() {
       )
       .then(
         (res) => {
-          showMessage( "User created succussfully!", "success");
+          showAlert( "User created succussfully!", "success");
           setUserType((newUser) => false);
           document.querySelector("button.ckValidate").classList.remove("hide");
         },
         (error) => {
-          showMessage( "That didn't work: " + error, "danger");
+          showAlert( "That didn't work: " + error, "danger");
         }
       );
   };
@@ -81,6 +97,11 @@ function App() {
     event.preventDefault();
     const email = document.querySelector("input[name='email']").value;
     const password = document.querySelector("input[name='password']").value;
+
+    if(!email || !password){
+      showAlert( 'Not one character?', "danger");
+      return false;
+    }
 
     axios
       .post(
@@ -97,7 +118,7 @@ function App() {
           validateUser(res.data.success, res.data.token, email, res.data.data);
         },
         (error) => {
-          showMessage( "That didn't work: " + error, "danger");
+          showAlert( "That didn't work: " + error, "danger");
         }
       );
   };
@@ -120,7 +141,7 @@ function App() {
       console.log("res from logout: "+ res);
       },
       (error) => {
-        showMessage( "Something happened while logging out: : " + error, "danger");
+        showAlert( "Something happened while logging out: : " + error, "danger");
       }
     );
   };
@@ -149,7 +170,7 @@ function App() {
           }
         },
         (error) => {
-          showMessage( "That didn't work: " + error, "danger");
+          showAlert( "That didn't work: " + error, "danger");
         }
       );
     } 
@@ -159,56 +180,66 @@ function App() {
   return (
     <React.Fragment>
       {isValidUser === true ? (
-        <nav className="navbar-expand-md navbar-dark bg-dark fixed-top">
-          <div className="d-flex bd-highlight mb-3">
-            <div className="p-2 bd-highlight">
-              {" "}
-              <img
-                src="https://www.mechanized-aesthetics.net/MA-2015/img/MA_Logo.png"
-                className="img-fluid logo"
-              />
-            </div>
-            <div className="ml-auto p-2 bd-highlight">
-              <Theme userEmail={userEmail} showMessage={showMessage} />
-            </div>
-          </div>
-        </nav>
-      ) : null}
-      <div className="container">
-        {isValidUser === false ? (
-          <Login
+<Nav />
+      ) : 
+      <Login
             login={login}
             createUser={createUser}
             setUserType={setUserType}
             newUser={newUser}
           />
-        ) : (
+      }
+      <main>
+      <div className={isValidUser !== false ? "container py-5": "container"} >
+
+      {isValidUser === true ? (
+        <MainContent />
+        ):null
+      }
+        {alert !== "default" ? (
+          <div
+            className={"alert alert-" + alertType + " animated fadeIn"}
+            role="alert"
+          >
+            {alert}
+          </div>
+        ) : null}
+      </div>
+      </main>
+  {isValidUser === true ? (<footer className="footer mt-auto py-3 px-3 bg-dark text-muted">
           <div className="row">
-            <div className="col-md-12">
-              <h1>Logged in as: {userEmail}</h1>
-            </div>
             <div className="col-md-3">
+{infoMessage === "account-settings" ? 
+<a href="#settingsPanel"  className="btn btn-secondary" onClick={() => toggleInfo((infoMessage) => "")}>{userEmail} <i className="fas fa-cog"></i></a>:
+<a href="#settingsPanel" className="btn btn-secondary" onClick={() => toggleInfo((infoMessage) => "account-settings")}>{userEmail} <i className="fas fa-cog"></i></a>
+}
+{infoMessage === "account-settings" ? 
+              <div id="settingsPanel" className="py-2">
+              <label>Settings:</label>
+              <ul className="noStyle">
+                <li> <Theme userEmail={userEmail} showAlert={showAlert} /></li>
+                <li><ChangePassword showAlert={showAlert} /></li>
+                <li>
+                  <DeleteUser
+                            userEmail={userEmail}
+                            logout={logout}
+                            showAlert={showAlert}
+                            infoMessage={infoMessage}
+                          />
+                  </li>
+              </ul>
+              </div>
+              :null}
+            </div>
+            <div className="col-md-7"></div>
+            <div className="col-md-2">
               <button className="btn btn-block btn-danger" onClick={logout}>
                 Logout
               </button>
             </div>
-            <DeleteUser
-              userEmail={userEmail}
-              logout={logout}
-              showMessage={showMessage}
-            />
-            <ChangePassword showMessage={showMessage} />
           </div>
-        )}{" "}
-        {message !== "default" ? (
-          <div
-            className={"alert alert-" + messageType + " animated fadeIn"}
-            role="alert"
-          >
-            {message}
-          </div>
-        ) : null}
-      </div>
+          </footer>
+        ):null}{" "}
     </React.Fragment>
   );
 }

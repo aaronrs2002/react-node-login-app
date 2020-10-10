@@ -31,23 +31,24 @@ const ChangePassword = (props) => {
         )
         .then(
           (res) => {
-            props.showMessage("Password changed successfully", "success");
+            props.showAlert("Password changed successfully", "success");
             document.querySelector("input[name='new-password']").value = "";
           },
           (error) => {
-            props.showMessage("Password change didn't work: " + error, "danger");
+            props.showAlert("Password change didn't work: " + error, "danger");
           }
         );
     } else {
       newPasswordElem.classList.add("error");
-      props.showMessage('Please input something into the "New Password" field.', "danger");
+      props.showAlert('Please input something into the "New Password" field.', "danger");
     }
   };
 
   return (
-    <div className="col-md-3">
+  
     
-        <div className="form-group">
+        <div className="form-group py-2">
+    
           <input
             type="password"
             name="new-password"
@@ -63,7 +64,6 @@ const ChangePassword = (props) => {
           </button>
         </div>
  
-    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import themesList from "./ThemesList";
+import SaveTheme from "./SaveTheme"
 import axios from "axios";
 
 const Theme = (props) => {
@@ -10,12 +11,7 @@ const Theme = (props) => {
     },
   };
 
-  function saveTheme(whichTheme) {
-    localStorage.setItem("theme", whichTheme);
-    document
-      .querySelector("link[data-bootswatch='true']")
-      .setAttribute("href", whichTheme);
-  }
+
 
   function changeTheme(whichTheme) {
     if (whichTheme === "themeSelect") {
@@ -33,43 +29,25 @@ const Theme = (props) => {
       )
       .then(
         (res) => {
-          saveTheme(whichTheme);
-          props.showMessage( "Theme changed!", "success");
+          SaveTheme(whichTheme);
+          props.showAlert( "Theme changed!", "success");
         },
         (error) => {
-          props.showMessage( "That theme change didn't work: " + error, "danger");
+          props.showAlert( "That theme change didn't work: " + error, "danger");
         }
       );
   }
 
-  useEffect(() => {
-    if (localStorage.getItem("theme")) {
-      saveTheme(localStorage.getItem("theme"));
-    }
-    if (localStorage.getItem("email")) {
-      axios.get("/theme/" + props.userEmail).then(
-        (res) => {
-          if (res.data[0].theme) {
-            saveTheme(res.data[0].theme);
-          } else {
-            saveTheme("css/bootstrap.min.css");
-          }
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
-  });
 
   return (
-    <div className="themeMenuContainer">
+    <div>
+
       <select
-        className="form-control"
+        className="form-control py-2"
         id="theme"
         onChange={changeTheme.bind(this, "themeSelect")}
       >
-        <option value="css/bootstrap.min.css">Select Theme</option>
+        <option value="css/bootstrap.min.css">Select Bootswatch Theme</option>
         {themesList
           ? themesList.map((theme, i) => {
               return (

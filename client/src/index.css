@@ -37,10 +37,19 @@ img.logo {
   display: none;
 }
 
-.container {
-  padding-top: 120px;
+#settingsPanel {
+  height: 400px;
 }
 
-.themeMenuContainer {
-  width: 300px;
+ul.noStyle {
+  padding-left: 0px;
+  list-style-type: none;
+}
+
+footer {
+  box-shadow: 0 -4px 3px rgba(0, 0, 0, 0.075);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
 }
