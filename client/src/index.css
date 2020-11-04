@@ -53,3 +53,16 @@ footer {
   bottom: 0;
   width: 100%;
 }
+
+div[role="alert"] {
+  margin-top: 10%;
+  position: fixed;
+  z-index: 150;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  div[role="alert"] {
+    margin-top: 20%;
+  }
+} /*end 767*/
